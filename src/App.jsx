@@ -1,6 +1,7 @@
 import 'bulma/css/bulma.css';
 import './App.scss';
 import React, { useState } from 'react';
+import cn from 'classnames';
 
 export const goodsFromServer = [
   'Dumplings',
@@ -14,19 +15,21 @@ export const goodsFromServer = [
   'Jam',
   'Garlic',
 ];
+const ALPHABET = 'alphabet';
+const LENGTH = 'length';
 
 const sortGoods = (goods, sortType, isReverse) => {
-  let sortedGoods = [...goods];
+  const sortedGoods = [...goods];
 
   switch (sortType) {
-    case 'alphabet':
-      sortedGoods = [...goods].sort((a, b) => a.localeCompare(b));
+    case ALPHABET:
+      sortedGoods.sort((a, b) => a.localeCompare(b));
       break;
-    case 'length':
-      sortedGoods = [...goods].sort((a, b) => a.length - b.length);
+    case LENGTH:
+      sortedGoods.sort((a, b) => a.length - b.length);
       break;
     default:
-      sortedGoods = [...goods];
+      break;
   }
 
   if (isReverse) {
@@ -42,11 +45,11 @@ export const App = () => {
   const goods = sortGoods(goodsFromServer, activeSort, isReverse);
 
   const sortAlphabetically = () => {
-    setActiveSort('alphabet');
+    setActiveSort(ALPHABET);
   };
 
   const sortByLength = () => {
-    setActiveSort('length');
+    setActiveSort(LENGTH);
   };
 
   const goodsReverse = () => {
@@ -63,7 +66,9 @@ export const App = () => {
       <div className="buttons">
         <button
           type="button"
-          className={`button is-info ${activeSort === 'alphabet' ? '' : 'is-light'}`}
+          className={cn('button is-info', {
+            'is-light': activeSort !== ALPHABET,
+          })}
           onClick={sortAlphabetically}
         >
           Sort alphabetically
@@ -71,7 +76,9 @@ export const App = () => {
 
         <button
           type="button"
-          className={`button is-success ${activeSort === 'length' ? '' : 'is-light'}`}
+          className={cn('button is-success', {
+            'is-light': activeSort !== LENGTH,
+          })}
           onClick={sortByLength}
         >
           Sort by length
@@ -79,13 +86,15 @@ export const App = () => {
 
         <button
           type="button"
-          className={`button is-warning ${isReverse === true ? '' : 'is-light'}`}
+          className={cn('button is-warning', {
+            'is-light': isReverse === false,
+          })}
           onClick={goodsReverse}
         >
           Reverse
         </button>
 
-        {(activeSort !== '' || isReverse) && (
+        {(activeSort || isReverse) && (
           <button
             type="button"
             className="button is-danger is-light"
@@ -97,8 +106,8 @@ export const App = () => {
       </div>
 
       <ul>
-        {goods.map((good, index) => (
-          <li data-cy="Good" key={goods[index]}>
+        {goods.map(good => (
+          <li data-cy="Good" key={good}>
             {good}
           </li>
         ))}
